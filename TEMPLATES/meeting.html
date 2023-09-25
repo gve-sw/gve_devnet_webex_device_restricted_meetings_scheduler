@@ -1,0 +1,227 @@
+{% extends "masterPage.html" %}
+
+{% block content %}
+
+<div class="row">
+
+    <!-- Left Rail -->
+    <div class="col-xl-3 col-md-3">
+    </div>
+
+    <!-- Middle Rail -->
+    <div class="col-xl-6 col-md-6">
+        <div class="section">
+            <div class="panel panel--loose panel--raised base-margin-bottom">
+                <h2 class="subtitle">Schedule a meeting</h2>
+                <hr>
+
+                {% include "alert.html" %}
+                {% include "success.html" %}
+                
+                <form action="/meeting" method="POST">
+                    <div class="form-group base-margin-bottom">
+                        <div class="form-group__text">
+                            <input id="title" name="title" type="text" required="">
+                            <label for="title">Meeting Name:* </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group base-margin-bottom">
+                        <label for="person_type_select">External Person Role:</label>
+                        <div class="form-group__text select">
+                            <select name="person_type_select" id='person_type_select' onchange="filter_for_external_users({{external_persons}});">
+                                <option disabled selected hidden value="0">Please choose a role of the external person...</option>
+                                <option value="representative">Legal Representative</option>
+                                <option value="no_representative">No Representative</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group base-margin-bottom">
+                        <label for="external_select">External Person:*</label>
+                        <div class="form-group__text select">
+                            <select name="external_select" id='external_select' required>
+                                <option disabled selected hidden value="0">Please choose a external person...</option>
+                                {%for external_person in external_persons %}
+                                <option value="{{external_person.email}}">{{external_person.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group base-margin-bottom">
+                        <div class="form-group__text">
+                            <input id="start_date" name="start_date" type="datetime-local" required="" min="" max="" onchange="filter_for_available_workspaces({{phonebook_devices}});">
+                            <label for="start_date">Start Time:* </label>
+                        </div>
+                        <div class="help-block" role="alert">
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group base-margin-bottom">
+                        <div class="form-group__text">
+                            <input id="end_date" name="end_date" type="datetime-local" required="" min="" max="" onchange="filter_for_available_workspaces({{phonebook_devices}});">
+                            <label for="end_date">End Time:* </label>
+                        </div>
+                        <div class="help-block" role="alert">
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group base-margin-bottom">
+                        <label for="location_select">Location:</label>
+                        <div class="form-group__text select">
+                            <select name="location_select" id='location_select' onchange="filter_for_available_workspaces({{phonebook_devices}});">
+                                <option disabled selected hidden value="0">Please choose a location...</option>
+                                {%for location in locations_list %}
+                                <option value="{{location}}">{{location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group base-margin-bottom">
+                        <label for="device_select">Workspace:*</label>
+
+                        <div class="form-group__text select">
+                            <select name="device_select" id='device_select' required>
+                                <option disabled selected hidden value="0">Please choose a workspace...</option>
+                                {% for device in phonebook_devices %}
+                                <option value="{{device.id}}">{{device.displayName}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="help-block" role="alert">
+                            <span>Workspace options based on their availablity during the selected time range.</span>
+                        </div>
+                    </div>
+
+                    <!-- Button area-->
+                    <input id="meetings-submit" onclick="showLoadingText('meetings-submit', 'Creating Meeting ... ');"
+                    downloadonload="showOriginalText('meetings-submit', 'Schedule Meeting')"  class="btn btn-primary" type="submit"
+                        value="Schedule Meeting">
+                    <span class="required-label pull-right">* required fields</span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Rail -->
+    <div class="col-xl-3 col-md-3">
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        set_min_to_current_date();
+        set_max_to_one_year_later();
+    });
+
+    function set_min_to_current_date(){
+        today = new Date();
+        timezone_shift = today.getTimezoneOffset()
+        today.setMinutes(today.getMinutes() - timezone_shift);
+        today_format = today.toJSON().slice(0,16);
+        $('input[type=datetime-local]').attr({"min": today_format});
+    }
+
+    function set_max_to_one_year_later(){
+        today = new Date();
+        timezone_shift = today.getTimezoneOffset()
+        today.setMinutes(today.getMinutes() - timezone_shift);
+        today.setDate(today.getDate() + 364)
+        today_format = today.toJSON().slice(0,16);
+        $('input[type=datetime-local]').attr({"max": today_format});
+    }
+
+    function filter_for_external_users(external_persons){
+        
+        show_all_elements("#external_select option");
+
+        selected_person_type = $('#person_type_select').val();
+
+        for(let i = 0; i < external_persons.length; i++){
+            person_email = external_persons[i].email;
+            person_role = external_persons[i].role;
+
+                if(person_role != selected_person_type){
+                    $('#external_select').find('option[value="'+person_email+'"]').hide();
+                    $('#external_select').find('option[value="'+person_email+'"]').prop("disabled", true);
+                    $('#external_select').find('option[value="'+person_email+'"]').filter(":selected").prop("selected", false);
+                    $('#external_select').find('option[value="0"]').prop("selected", true);
+                }
+        }
+
+    }
+
+    function show_all_elements(selector){
+        $(selector).each(function()
+        {
+            $(this).show();
+            $(this).prop("disabled", false);
+        });
+    }
+
+    function filter_for_available_workspaces(devices){
+
+        show_all_elements("#device_select option");
+
+        range_selected_start = $('#start_date').val();
+        range_selected_end = $('#end_date').val();
+        selected_location = $('#location_select').val();
+
+        for(let i = 0; i < devices.length; i++){
+            device_bookings = devices[i].bookings;
+            device_location = devices[i].locationName;
+            device_id = devices[i].id;
+                bookings_during_selected_time_bool = bookings_during_selected_time(range_selected_start, range_selected_end, device_bookings);
+                filtered_out_by_location_filter_bool = filtered_out_by_location_filter(selected_location, device_location);
+
+                if(bookings_during_selected_time_bool || filtered_out_by_location_filter_bool){
+                    $('#device_select').find('option[value="'+device_id+'"]').hide();
+                    $('#device_select').find('option[value="'+device_id+'"]').prop("disabled", true);
+                    $('#device_select').find('option[value="'+device_id+'"]').filter(":selected").prop("selected", false);
+                    $('#device_select').find('option[value="0"]').prop("selected", true);
+                }
+        }
+    }
+
+    function filtered_out_by_location_filter(selected_location, device_location){
+        if(selected_location == null || selected_location == device_location){
+            return false;
+        }
+        return true;
+    }
+
+    function bookings_during_selected_time(range_selected_start, range_selected_end, bookings){
+        
+        for(let j = 0; j < bookings.length; j++){
+            booking = bookings[j];
+            range_booking_start = booking.Time.StartTime;
+            range_booking_end = booking.Time.EndTime;
+
+            if (booking_and_selection_overlap(range_selected_start, range_selected_end, range_booking_start, range_booking_end)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function booking_and_selection_overlap(range_selected_start, range_selected_end, range_booking_start, range_booking_end){
+        const range1Start = new Date(range_selected_start);
+        const range1End = new Date(range_selected_end);
+
+        const range2Start = new Date(range_booking_start);
+        const range2End = new Date(range_booking_end);
+
+        if (range1Start < range2End && range2Start < range1End) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+</script>
+
+{% endblock %}

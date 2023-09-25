@@ -1,0 +1,110 @@
+        
+/*Masterpage*/
+    #footer-link-meraki{
+        height: 15px;
+    }
+    #footer-link-gve-devnet{
+        height: 30px;
+        bottom: 4px;
+        position: relative;
+    }
+    #time_location_note{
+        color: var(--cui-color-gray-500);
+        padding-top: 5px;
+        text-align: center;
+        font-size: var(--cui-font-size-sm);
+    }
+    /*Position footer at bottom. Even with less content.*/
+    .cui .content{
+        min-height: 93vh;
+    }
+    body.cui footer, body.cui .footer{
+        margin-top: 0;
+    }
+    /*Header*/
+    #header-logo{
+        font-size: 23px;
+    }
+
+/*Login*/  
+    .required-label{
+        color: var(--cui-form-label-color);
+    }    
+    #customer-logo{
+        height:55px;
+        margin-bottom: 10px;
+    }
+
+/*Left Menu*/
+.cui .sidebar{
+    padding-top: 30px;
+}
+
+/*Charts from chart.js*/
+.chartjs-render-monitor{
+    background-color: white;
+    padding: 10px;
+}
+
+/*list groups*/
+.list-group{
+    padding-left: 0 !important;
+}
+
+.list-group-item{
+    list-style-type: none;
+}
+
+.list-group-item .btn--link{
+    padding-left: 0;
+    padding-right: 0;
+    text-align: left;
+}
+
+
+/*change disabled steps background color for stepper without */
+.cui .steps.steps--primary .step .step__icon,
+.cui .steps.steps--primary .ui-step .step__icon,
+.cui .steps.ui-steps--primary .step .step__icon,
+.cui .steps.ui-steps--primary .ui-step .step__icon,
+.cui .ui-steps.steps--primary .step .step__icon,
+.cui .ui-steps.steps--primary .ui-step .step__icon,
+.cui .ui-steps.ui-steps--primary .step .step__icon,
+.cui .ui-steps.ui-steps--primary .ui-step .step__icon {
+ background-color:var(--cui-color-gray-400);
+ border:var(--cui-step-line-thickness-inactive) solid var(--cui-background-active);
+ color:var(--cui-font-color)
+}
+
+.cui .panel-icon{
+    color: var(--cui-theme-primary);
+}
+
+.cui .steps, .cui .ui-steps{
+    width: 90%;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: var(--cui-color-gray-500) !important;
+    opacity: 1; /* Firefox */
+    font-style: italic;
+  }
+
+
+#space-loader{
+    text-align: center;
+}
+
+#spaces-form{
+    display: block;
+    width: 100%;
+}
+
+#disclaimer_note{
+    color: var(--cui-color-danger);
+    text-align: center;
+}
+
+.cui .table td, .cui .table th, .cui .table tr{
+    white-space: normal;
+}

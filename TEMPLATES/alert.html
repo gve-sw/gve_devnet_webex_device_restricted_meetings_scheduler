@@ -1,0 +1,8 @@
+    {% if error == True %}  
+        <div class="alert alert--danger" role="alert">
+            <div class="alert__icon icon-error-outline"></div>
+            <div class="alert__message">
+                An error has occurred. {{ errormessage }}
+            </div>
+        </div>                 
+    {% endif %}
